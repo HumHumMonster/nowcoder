@@ -1,5 +1,5 @@
 /*
-884A (图上dp).cpp
+884A (图上dp，树的直径).cpp
 
 感觉很难！自己摸索了一个方法
 
@@ -12,7 +12,80 @@
 DFS2把子树之外的点的距离合并出来，得到每个点到离它最远的人的距离
 最后求其中的最小值.
 
+
+看了题解以后发现果然不是正解！
+正解就是树的直径除以二后向上取整
+hhhh
 */
+
+//树的直径
+#include <stdio.h>
+#include <vector>
+#include <string.h>
+using namespace std ;
+
+const int MAXN = 1e5 + 10 ;
+
+int n , m ;
+int dp[MAXN] ;
+int id[MAXN] ;
+int a , b ;
+vector <int> V[MAXN] ;
+
+int vis[MAXN] ;
+int p ;
+int u ;
+
+void DFS(int x , int pre)
+{
+    //printf ("x = %d   pre = %d\n" , x , pre) ;
+    if (vis[x])
+    {
+        dp[x] = 0 ;
+        id[x] = x ;
+    }
+    for (int i = 0 ; i < V[x].size() ; ++i)
+    {
+        int to = V[x][i] ;
+        if (to == pre)
+            continue ;
+        DFS(to , x) ;
+        if (id[to])
+        {
+            if (dp[x] < dp[to] + 1)
+            {
+                dp[x] = dp[to] + 1 ;
+                id[x] = id[to] ;
+            }
+        }
+    }
+}
+
+int main ()
+{
+    scanf ("%d%d" , &n , &m) ;
+    for (int i = 1 ; i < n ; ++i)
+    {
+        scanf ("%d%d" , &a , &b) ;
+        V[a].push_back(b) ;
+        V[b].push_back(a) ;
+    }
+    for (int i = 1 ; i <= m ; ++i)
+    {
+        scanf ("%d" , &a) ;
+        vis[a] = 1 ;
+    }
+    DFS(a , 0) ;
+    a = id[a] ;
+    memset (id , 0 , sizeof (id)) ;
+    memset (dp , 0 , sizeof (dp)) ;
+    DFS(a , 0) ;
+    printf ("%d" , (dp[a] + 1) / 2) ;
+}
+
+
+
+//图上dp
 
 #include <stdio.h>
 #include <string.h>
@@ -167,3 +240,5 @@ int main ()
     }
     printf ("%d" , res) ;
 }
+
+
